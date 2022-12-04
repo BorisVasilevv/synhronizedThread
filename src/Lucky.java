@@ -1,22 +1,25 @@
-public class Lucky {
-        static int x = 0;
-        static int count = 0;
+import java.util.concurrent.atomic.AtomicInteger;
 
+public class Lucky {
+
+
+
+        static AtomicInteger x = new AtomicInteger(0);
+        static AtomicInteger count = new AtomicInteger(0);
         static class LuckyThread extends Thread {
                 @Override
                 public void run() {
-                        synchronized (LuckyThread.class) {
-                                while (x < 999999) {
-                                        x++;
-                                        if ((x % 10) + (x / 10) % 10 + (x / 100) % 10 == (x / 1000)
-                                                % 10 + (x / 10000) % 10 + (x / 100000) % 10) {
-                                                System.out.println(x);
-                                                count++;
-                                        }
+                        while (x.get() < 999999) {
+                                int curX = x.incrementAndGet();
+                                if (curX <= 999999 && ((curX % 10) + (curX / 10) % 10 + (curX / 100) % 10 == (curX / 1000)
+                                        % 10 + (curX / 10000) % 10 + (curX / 100000) % 10)) {
+                                        System.out.println(curX);
+                                        count.incrementAndGet();
                                 }
                         }
                 }
         }
+
 
         public static void main(String[] args) throws InterruptedException {
                 Thread t1 = new LuckyThread();
